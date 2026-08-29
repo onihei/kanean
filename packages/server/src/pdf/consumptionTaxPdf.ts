@@ -106,7 +106,6 @@ export async function renderConsumptionTaxReturn(db: DataDb, fiscalYearId: numbe
   if (r.note) {
     y -= 6
     drawText(page, `※ ${r.note}`, L.margin.left, y, L.font.bodySize, font)
-    y -= L.rowHeight
   }
   drawText(page, '※ 自動生成の参考帳票です。提出前に税理士の確認を受けてください。', L.margin.left, L.margin.bottom, L.font.bodySize - 1, font)
 

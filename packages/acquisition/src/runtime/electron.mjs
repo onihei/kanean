@@ -234,7 +234,7 @@ class ElectronLocator {
   /** locator の要「見つかる／操作できるまで待つ」。尽きたら診断の材料になる形で失敗させる。 */
   async _waitFor(state, timeout = DEFAULT_ACTION_TIMEOUT_MS) {
     const deadline = Date.now() + timeout
-    let last = 0
+    let last
     for (;;) {
       const r = await this.page._eval(
         callInPage(

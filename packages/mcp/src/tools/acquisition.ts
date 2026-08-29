@@ -337,7 +337,7 @@ export function registerAcquisitionTools(server: McpServer, deps: ToolDeps): voi
       inputSchema: {
         source: z.string().describe('連携サービスの識別子'),
         calibration: z
-          .record(z.unknown())
+          .record(z.string(), z.unknown())
           .describe('差し替えるキーと値だけを渡す（渡さなかったキーは同梱のまま）'),
         version: z.string().optional().describe('この較正の呼び名（結果に残る）'),
         ...bookArg,

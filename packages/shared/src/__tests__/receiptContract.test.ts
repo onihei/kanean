@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { zodToJsonSchema } from 'zod-to-json-schema'
+import { z } from 'zod'
 import { receiptMetaSchema, receiptStatusSchema } from '../receipt.js'
 
 /**
@@ -82,7 +82,8 @@ describe('生成された JSON Schema', () => {
 
   for (const { file, name, schema } of targets) {
     it(`${file} が zod と一致している（ズレたら build:schema を回す）`, () => {
-      const generated = zodToJsonSchema(schema, { name, $refStrategy: 'none' })
+      const { $schema, ...body } = z.toJSONSchema(schema, { target: 'draft-7' })
+      const generated = { $ref: `#/definitions/${name}`, definitions: { [name]: body }, $schema }
       expect(readJson(path.join(contractDir, file))).toEqual(generated)
     })
   }

@@ -268,7 +268,7 @@ function BalanceRow({
 
   const commit = async () => {
     const amount = yenOrZero(val)
-    let ok = true
+    let ok: boolean
     if (amount <= 0) {
       if (!existing) return // 元々無い空セル＝何もしない（無駄な API 呼び出しを避ける）
       ok = await onDelete(existing.id)

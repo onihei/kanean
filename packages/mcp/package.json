@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
-    "zod": "^3.25.76"
+    "zod": "^4.5.4"
   },
   "//devDependencies": "@kanean/server・@kanean/shared・@kanean/acquisition は **型のためだけ**に置く（実装は import しない＝会計ロジックを持ち込まない）。acquisition は server/types が再輸出する JobView 等の参照先（Calibration/StoredDiagnostic/Sel）の解決に要る。devDependencies なのは配布バンドルに同梱させないため。",
   "devDependencies": {
@@ -25,8 +25,8 @@
     "@kanean/acquisition": "workspace:*",
     "@kanean/server": "workspace:*",
     "@kanean/shared": "workspace:*",
-    "@types/node": "^22.10.2",
+    "@types/node": "^24.13.3",
     "esbuild": "^0.28.2",
-    "vitest": "^2.1.8"
+    "vitest": "^4.1.11"
   }
 }

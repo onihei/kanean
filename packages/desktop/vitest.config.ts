@@ -1,12 +1,8 @@
 import { defineConfig } from 'vitest/config'
-import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  plugins: [react()],
   test: {
     // vitest 4 は既定 exclude から dist を外した（tsc が dist/__tests__ にもテストを出すため二重実行になる）。
     exclude: ['**/node_modules/**', '**/dist/**'],
-    globals: true,
-    environment: 'jsdom',
   },
 })

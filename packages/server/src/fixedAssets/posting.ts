@@ -153,7 +153,7 @@ export function postDepreciation(db: DataDb, fiscalYearId: number): Depreciation
       if (cur.householdAmount > 0) {
         tx.insert(journalLines).values({ entryId: entry.id, lineNo: lineNo++, side: 'debit', accountId: ownerDrawId, amount: cur.householdAmount }).run()
       }
-      tx.insert(journalLines).values({ entryId: entry.id, lineNo: lineNo++, side: 'credit', accountId: creditAccountId, amount: cur.depreciationAmount }).run()
+      tx.insert(journalLines).values({ entryId: entry.id, lineNo, side: 'credit', accountId: creditAccountId, amount: cur.depreciationAmount }).run()
 
       tx.insert(depreciationEntries)
         .values({

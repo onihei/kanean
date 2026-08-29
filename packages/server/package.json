@@ -23,25 +23,25 @@
     "lint": "eslint src/"
   },
   "dependencies": {
+    "@hono/node-server": "^2.1.1",
     "@kanean/acquisition": "workspace:*",
-    "@hono/node-server": "^1.13.7",
     "@kanean/core": "workspace:*",
     "@kanean/shared": "workspace:*",
     "@pdf-lib/fontkit": "^1.1.1",
     "better-sqlite3": "^13.0.3",
-    "drizzle-orm": "^0.38.3",
-    "hono": "^4.6.15",
-    "iconv-lite": "^0.6.3",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.13.5",
+    "iconv-lite": "^0.7.3",
     "pdf-lib": "^1.17.1",
-    "ulid": "^2.3.0",
-    "zod": "^3.24.1"
+    "ulid": "^3.0.2",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^9.6.0",
-    "@types/node": "^22.10.2",
-    "drizzle-kit": "^0.30.1",
-    "tsx": "^4.19.2",
-    "vitest": "^2.1.8"
+    "@types/node": "^24.13.3",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.23.12",
+    "vitest": "^4.1.11"
   },
   "files": [
     "dist",

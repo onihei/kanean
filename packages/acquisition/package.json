@@ -31,12 +31,12 @@
   },
   "//dependencies": "playwright-core はルートの devDependencies にある（スキル経路の実行殻A専用）。Electron 殻は electron 本体で動くので依存を足さない。pdfjs-dist は適格請求書 PDF のテキスト化（tasks 10.2a: poppler を配布物から外すため）。",
   "dependencies": {
-    "zod": "^3.25.76",
-    "pdfjs-dist": "^6.0.227"
+    "pdfjs-dist": "^6.3.289",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
-    "jsdom": "^25.0.1",
-    "vitest": "^2.1.8",
-    "@types/node": "^22.10.2"
+    "@types/node": "^24.13.3",
+    "jsdom": "^30.0.1",
+    "vitest": "^4.1.11"
   }
 }

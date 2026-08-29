@@ -158,7 +158,7 @@ export function rolloverOpeningBalances(input: RolloverInput): RolloverOpeningBa
 export function blueSpecialDeduction(input: BlueDeductionInput): BlueDeductionResult {
   const { incomeBeforeDeduction, filingType, bookkeeping, qualifiesFor65 } = input
 
-  let limit = 0
+  let limit: number
   let basis: string
   if (filingType !== 'blue') {
     limit = 0
