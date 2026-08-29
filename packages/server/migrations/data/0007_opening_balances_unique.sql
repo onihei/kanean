@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `opening_balances_fy_acc_sub_uq` ON `opening_balances` (`fiscal_year_id`,`account_id`,`sub_account_id`);

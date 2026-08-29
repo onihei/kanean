@@ -1,0 +1,1 @@
+ALTER TABLE `business_settings` ADD `blue_deduction_e_tax` integer DEFAULT false NOT NULL;

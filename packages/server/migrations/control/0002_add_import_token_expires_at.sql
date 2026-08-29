@@ -1,0 +1,1 @@
+ALTER TABLE `import_tokens` ADD `expires_at` text;

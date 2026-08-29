@@ -1,0 +1,111 @@
+{
+  "$ref": "#/definitions/ReceiptStatus",
+  "definitions": {
+    "ReceiptStatus": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "type": "number",
+              "const": 1
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[0-7][0-9A-HJKMNP-TV-Z]{25}$"
+            },
+            "processedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "outcome": {
+              "type": "string",
+              "const": "registered"
+            },
+            "summary": {
+              "type": "object",
+              "properties": {
+                "entryId": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0
+                },
+                "date": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "totalAmount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "exclusiveMaximum": 1000000000000
+                },
+                "accountName": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                }
+              },
+              "required": [
+                "entryId",
+                "date",
+                "totalAmount",
+                "accountName"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "id",
+            "processedAt",
+            "outcome",
+            "summary"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schemaVersion": {
+              "type": "number",
+              "const": 1
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[0-7][0-9A-HJKMNP-TV-Z]{25}$"
+            },
+            "processedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "outcome": {
+              "type": "string",
+              "const": "skipped"
+            },
+            "reason": {
+              "type": "string",
+              "enum": [
+                "duplicate",
+                "unreadable",
+                "out_of_period",
+                "unmatched_card"
+              ]
+            },
+            "detail": {
+              "type": "string",
+              "maxLength": 500
+            }
+          },
+          "required": [
+            "schemaVersion",
+            "id",
+            "processedAt",
+            "outcome",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

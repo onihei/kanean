@@ -1,0 +1,134 @@
+{
+  "$ref": "#/definitions/ReceiptMeta",
+  "definitions": {
+    "ReceiptMeta": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[0-7][0-9A-HJKMNP-TV-Z]{25}$"
+        },
+        "capturedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "fileName": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            },
+            "contentType": {
+              "type": "string",
+              "enum": [
+                "image/heic",
+                "image/heif",
+                "image/jpeg",
+                "image/png"
+              ]
+            },
+            "sizeBytes": {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "fileName",
+            "contentType",
+            "sizeBytes",
+            "sha256"
+          ],
+          "additionalProperties": false
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": [
+            "cash",
+            "card"
+          ]
+        },
+        "usage": {
+          "type": "string",
+          "enum": [
+            "business",
+            "prorated",
+            "private"
+          ]
+        },
+        "meal": {
+          "type": "object",
+          "properties": {
+            "partySize": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 999
+            },
+            "participants": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "maxItems": 50
+            }
+          },
+          "required": [
+            "partySize"
+          ],
+          "additionalProperties": false
+        },
+        "memo": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "ocr": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "totalAmount": {
+              "type": "integer",
+              "minimum": 0,
+              "exclusiveMaximum": 1000000000000
+            }
+          },
+          "additionalProperties": false
+        },
+        "qualityFlags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "blur",
+              "glare",
+              "cropped"
+            ]
+          },
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "capturedAt",
+        "image",
+        "paymentMethod"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,75 @@
+appId: jp.kanean.desktop
+productName: Kanean
+copyright: Kanean
+
+directories:
+  output: release
+  buildResources: build
+
+# dist と package.json のみ。
+# 実行時依存（@kanean/server / @kanean/acquisition とその依存）は electron-builder が
+# production dependencies として同梱する。@kanean/acquisition は素の ESM（src/*.mjs をそのまま実行）
+# なのでビルド成果物を持たない＝ dist ではなく src が同梱される必要がある（§8.2 の検証項目）。
+files:
+  - dist/**/*
+  - package.json
+  - '!**/*.map'
+
+# server は import.meta.url からの相対で migrations/ と assets/ を読む
+# （dist/db/router.js → ../../migrations、dist/pdf/*.js → ../../assets）。
+# dist だけ入れると **マイグレーションと官製様式PDF・IPAexフォントが欠落して起動時に失敗する**ため、
+# 同じ相対位置を保ったまま同梱されることを確認すること（§8.2 の検証項目）。
+
+# web のビルド成果物は resources/web へ（main.ts の webDistDir() が process.resourcesPath/web を見る）。
+# MCP バンドルは resources/kanean.mcpb へ。設定画面の「Claude Desktop と連携」がここから
+# 利用者に見える場所へ書き出す（mcpb は事前に `pnpm --filter @kanean/mcp bundle` で作る）。
+# ネットワークから取得させないため、必ず配布物に同梱する。
+# 同梱した MCP バンドルの版（`kanean.mcpb.version`）も並べて置く。アプリはこれを
+# 「配布物に入っている版」として、クライアントが名乗った版と突き合わせる（design D5）。
+# mcpb は zip なので、版1つのために実行時に展開しない。
+extraResources:
+  - from: ../web/dist
+    to: web
+  - from: ../mcp/build/kanean.mcpb
+    to: kanean.mcpb
+  - from: ../mcp/build/kanean.mcpb.version
+    to: kanean.mcpb.version
+
+# better-sqlite3 はネイティブアドオン。asar の中からは dlopen できないので必ず展開する。
+asar: true
+asarUnpack:
+  - '**/node_modules/better-sqlite3/**'
+
+mac:
+  category: public.app-category.finance
+  # アプリアイコン。build/icon.png（1024x1024）を `sips` で各サイズに起こし
+  # `iconutil -c icns` で畳んだものが build/icon.icns。差し替えは png を入れ替えて icns を作り直す。
+  #
+  # icon.png は Apple のアイコングリッドに合わせてある: 1024 のカンバスに本体 824（余白 100）、
+  # 角丸半径 185.4（本体の 22.5%・連続曲率なので超楕円で近似）。macOS は他プラットフォームと違い
+  # 角丸マスクを自動で当てないので、legacy .icns では自前でこの形に切る必要がある。
+  #
+  # ただし macOS 26 (Tahoe) は legacy .icns を **システム側で正規化する**。NSWorkspace が返す
+  # 実レンダリングで検証したところ、全面ベタ正方形 / 全面角丸 / 上記グリッド版の 3 つが
+  # 完全に同一（本体 80.5%・余白均等・角の曲率も一致）になった。つまりグリッド化が効くのは
+  # macOS 15 以前で、26 では何を渡しても同じ。害は無いのでグリッド版を正としている。
+  #
+  # macOS 26 の Liquid Glass（暗所/色調変種・鏡面ハイライト）を出すには Icon Composer で
+  # `.icon` を作り `icon: build/icon.icon` を指すこと。electron-builder 26.x は actool で
+  # Assets.car に畳んで CFBundleIconName を張り、それとは別に icns も同梱するので
+  # 26 未満の後方互換は保たれる（要 Xcode 26+）。素材は角丸を入れていない正方形版を使う
+  # ——マスクはツール側が当てるため。
+  icon: build/icon.icns
+  target:
+    - target: dmg
+      arch: [arm64]
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  # notarize は App Store Connect API キーで行う（APPLE_API_KEY / _KEY_ID / _ISSUER を環境変数で渡す）。
+  # Apple ID + App用パスワードは不要。
+  notarize: true
+
+dmg:
+  writeUpdateInfo: false

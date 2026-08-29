@@ -1,0 +1,1 @@
+ALTER TABLE `business_settings` ADD `evidence_capture` integer DEFAULT false NOT NULL;

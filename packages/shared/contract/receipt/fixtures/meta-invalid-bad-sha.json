@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "01JZQK8F3M4N5P6R7S8T9VWX30",
+  "capturedAt": "2026-08-14T12:37:00+09:00",
+  "image": {
+    "fileName": "01JZQK8F3M4N5P6R7S8T9VWX30.jpg",
+    "contentType": "image/jpeg",
+    "sizeBytes": 300000,
+    "sha256": "deadbeef"
+  },
+  "paymentMethod": "cash"
+}

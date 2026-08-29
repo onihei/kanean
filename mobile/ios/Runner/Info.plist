@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>ja</string>
+	<!--
+	  対応言語の宣言。**これが無いと iOS はアプリを英語圏のものと見なし、
+	  VisionKit のスキャナ UI（「Position the document in view」やフラッシュの操作）が
+	  英語で出る。** OS 提供の画面はアプリの言語に従うので、ここで日本語を名乗る。
+	-->
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>ja</string>
+		<string>en</string>
+	</array>
+	<key>CFBundleDisplayName</key>
+	<string>Kanean</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<!--
+	  iCloud Drive に「Kanean」という見えるフォルダとして出す（receipt-inbox spec）。
+	  NSUbiquitousContainerIsDocumentScopePublic を落とすとコンテナは作られても
+	  アプリからしか見えず、Mac 側の Claude Desktop が読めない＝設計が成立しない。
+	  ⚠️ この辞書の内容は iCloud 側にキャッシュされる。後から変えるときは
+	  CFBundleVersion を上げること（上げないと反映されない）。
+	-->
+	<!--
+	  カメラの用途。**これが無いとカメラに触れた瞬間に iOS がプロセスを落とす**
+	  （権限ダイアログすら出ない）。写真ライブラリには保存しないので、
+	  NSPhotoLibrary* は意図的に持たない（Issue #112「普通の写真と混ざる問題の根治」）。
+	-->
+	<key>NSCameraUsageDescription</key>
+	<string>レシートを撮影して、帳簿の証憑として記録します。撮った写真は写真ライブラリには保存されません。</string>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.com.susipero.kanean.mobile</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>Kanean</string>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>Any</string>
+		</dict>
+	</dict>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>kanean</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string>UIWindowScene</string>
+					<key>UISceneConfigurationName</key>
+					<string>flutter</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+					<key>UISceneStoryboardFile</key>
+					<string>Main</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+</dict>
+</plist>

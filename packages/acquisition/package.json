@@ -1,0 +1,41 @@
+{
+  "name": "@kanean/acquisition",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.mjs",
+  "types": "types/index.d.ts",
+  "bin": {
+    "kanean-scrape": "bin/scrape.mjs",
+    "kanean-acq-diff": "bin/acq-diff.mjs",
+    "kanean-pdf-text": "bin/pdf-text.mjs"
+  },
+  "//exports": "巡回手順の実体はここ1箇所だけ（design D1）。スキル経路も Electron 経路も同じ sites/ を読む。",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./src/index.mjs"
+    },
+    "./sites": "./src/sites/index.mjs",
+    "./runtime/playwright": "./src/runtime/playwright.mjs",
+    "./runtime/electron": {
+      "types": "./types/electron.d.ts",
+      "default": "./src/runtime/electron.mjs"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "lint": "eslint src/ bin/",
+    "typecheck": "tsc --noEmit"
+  },
+  "//dependencies": "playwright-core はルートの devDependencies にある（スキル経路の実行殻A専用）。Electron 殻は electron 本体で動くので依存を足さない。pdfjs-dist は適格請求書 PDF のテキスト化（tasks 10.2a: poppler を配布物から外すため）。",
+  "dependencies": {
+    "zod": "^3.25.76",
+    "pdfjs-dist": "^6.0.227"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1",
+    "vitest": "^2.1.8",
+    "@types/node": "^22.10.2"
+  }
+}

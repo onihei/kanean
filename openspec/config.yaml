@@ -1,0 +1,67 @@
+schema: spec-driven
+
+context: |
+  Kanean — 個人事業主向けの確定申告/会計システム（青色申告・簡易課税・固定資産・家事按分）。
+  ローカル単一ユーザーのアプリ。認証機構は持たず、127.0.0.1 限定バインドが唯一のアクセス境界。
+  配布形態は Electron デスクトップアプリ（packages/desktop）。アプリ起動中だけ生きる 1 プロセスで、
+  UI は カスタムプロトコル、ローカル連携（取込スキル・MCP ブリッジ）は unix socket。VPS 運用は終了。
+
+  技術: TypeScript(strict, ESM) / pnpm + turbo モノレポ。
+    packages/shared 型＋純粋ユーティリティ（Yen 型・CSV・アプリリンク。Node 依存は ./node サブパス）
+    packages/core   会計ドメインの純関数（税・償却・残高）。ゴールデンテスト対象。I/Oなし
+    packages/server Hono + Drizzle + better-sqlite3（取込・仕訳・帳票・PDF）
+    packages/web    React 18 + Vite
+    packages/acquisition 巡回コア（sites/=巡回手順の唯一の実体 + playwright/electron の2実行殻）
+    packages/desktop Electron シェル（createApp() を同一プロセスで動かす。TCP を開かない）
+    packages/mcp    MCP ブリッジ（.mcpb 同梱配布。unix socket 経由で server の API を呼ぶ）
+
+  データ: SQLite 2層。control plane = $DATA_DIR/control.sqlite（帳簿レジストリ books ＋ backup_status ＋ app_settings）、
+    data plane = $DATA_DIR/books/{book_id}.sqlite（帳簿ごとの会計データ。複数帳簿を持てる）。
+    物理ファイル分離なのでクエリに帳簿条件は不要。対象帳簿は X-Book-Id ヘッダ等で解決する。
+
+  規約:
+    - 金額は円整数（shared の Yen 型）。浮動小数で持たない。
+    - 会計計算は packages/core の純関数に隔離し I/O を混ぜない。期待値（ゴールデン）テストで固定。
+      検算基準「マツダ2」= 償却 439,919 / 必要経費 219,960 / 残高 1、簡易課税 = 国390k/地方110k。
+    - import は .js 拡張子付き。ESLint flat config / Prettier（semi:false, singleQuote, printWidth:100）。
+    - テストは各パッケージ src/__tests__/（vitest）。
+    - 帳簿・決算・申告は status='confirmed' の仕訳のみを集計する。
+    - 取込・起票は「黙って確定しない・黙って落とさない」（draft 提示＋除外/重複の件数明示）。
+    - legalRisk:high（申告書・控除判定・決算整理・二重計上防止 等）は税理士サインオフを前提とし、
+      システムが単独で「提出可能」を宣言しない。
+
+  詳細設計は docs/ を正とする（実装より docs が優先）:
+    PRD.md / architecture.md / data-model.md / accounting-spec.md / depreciation-spec.md /
+    form-mapping.md / csv-format.md / ec-import-api.md / bank-import-api.md /
+    classification-policy.md / acquisition-skill-spec.md / roadmap.md
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+# Example:
+#   context: |
+#     Tech stack: TypeScript, React, Node.js
+#     We use conventional commits
+#     Domain: e-commerce platform
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing

@@ -1,0 +1,255 @@
+/*
+ * 官製様式（確定申告書・消費税申告書・青色決算書）の HTML/CSS 構造再現スタイル。
+ * 背景画像オーバーレイではなく、罫線セル＋欄番号＋セクションをグリッド/テーブルで組む。
+ * 画面では白地のシート、印刷では A4・ページ送りに整形する。
+ */
+
+/*
+ * --c-* はアプリの色トークン。実体は styles/app.css の1箇所で定義され、ここは参照するだけ
+ * （issue #255 の手動同期を issue #274 で解消）。
+ * --gov-* は様式の紙面パレット（罫線・地・墨色）で、アプリ側とは独立した印刷様式の色。
+ */
+:root {
+  --gov-line: #999; /* 様式の罫線 */
+  --gov-frame: #ccc; /* シートの外枠 */
+  --gov-ink: #111; /* 紙面の本文 */
+  --gov-ink-sub: #333; /* 紙面の弱い文字 */
+  --gov-head-bg: #f5f7f8; /* 見出しセル地 */
+  --gov-section-bg: #eef2f5; /* セクション帯 */
+  --gov-total-bg: #fafbfc; /* 合計行の地 */
+  --gov-no-ink: #1a3550; /* 欄番号（丸数字）の色 */
+}
+
+/* 画面で横幅が足りないときは横スクロール（様式は固定幅で崩さない）。 */
+.gov-wrap {
+  overflow-x: auto;
+  padding: 4px 0 16px;
+}
+
+/* 1 ページ＝1 シート。A4 縦（210mm）相当の固定幅。 */
+.gov-page {
+  box-sizing: border-box;
+  width: 760px;
+  margin: 0 auto 20px;
+  padding: 20px 24px 28px;
+  background: var(--c-surface);
+  border: 1px solid var(--gov-frame);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  color: var(--gov-ink);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.gov-title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin: 0 0 2px;
+}
+.gov-subtitle {
+  text-align: center;
+  font-size: 12px;
+  color: var(--gov-ink-sub);
+  margin: 0 0 10px;
+}
+/* 屋号・氏名・課税期間などのメタ行。 */
+.gov-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  font-size: 12px;
+  color: var(--gov-ink-sub);
+  border: 1px solid var(--gov-line);
+  padding: 6px 10px;
+  margin: 0 0 12px;
+}
+.gov-meta .k {
+  color: var(--c-muted);
+  margin-right: 6px;
+}
+
+/* セクション見出し帯。 */
+.gov-section {
+  background: var(--gov-section-bg);
+  border: 1px solid var(--gov-line);
+  border-bottom: none;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 8px;
+  margin-top: 14px;
+}
+.gov-section:first-of-type {
+  margin-top: 0;
+}
+
+/* 様式テーブル（罫線グリッド）。section 直後は上罫線を section と共有。 */
+.gov-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.gov-table th,
+.gov-table td {
+  border: 1px solid var(--gov-line);
+  padding: 3px 8px;
+  vertical-align: middle;
+  word-break: break-all;
+}
+.gov-table th {
+  background: var(--gov-head-bg);
+  font-weight: 600;
+  text-align: center;
+  color: var(--gov-ink-sub);
+}
+
+/* 列の多い様式（減価償却費の計算）の高密度テーブル。 */
+.gov-table.dense {
+  font-size: 10px;
+}
+.gov-table.dense th,
+.gov-table.dense td {
+  padding: 2px 4px;
+}
+
+/* 2 段組み（貸借対照表の 資産の部 / 負債・資本の部）。 */
+.gov-twocol {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.gov-twocol > div {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* 欄番号セル（㋐①⑫ 等の丸数字。様式左端の小箱）。 */
+.gov-no {
+  width: 34px;
+  text-align: center;
+  background: var(--gov-head-bg);
+  font-weight: 700;
+  color: var(--gov-no-ink);
+  white-space: nowrap;
+}
+.gov-label {
+  text-align: left;
+}
+.gov-label .hint {
+  color: var(--c-muted);
+  font-size: 11px;
+  margin-left: 4px;
+}
+/* 金額セル（右寄せ・等幅数字）。 */
+.gov-amount {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* 単位（円・千円・百円）注記。 */
+.gov-unit {
+  width: 44px;
+  text-align: center;
+  color: var(--c-muted);
+  font-size: 11px;
+}
+
+/* 小計・合計行。 */
+.gov-total td {
+  font-weight: 700;
+  background: var(--gov-total-bg);
+}
+.gov-emph td {
+  font-weight: 700;
+  color: var(--c-ok);
+}
+
+/* pdf.js による様式PDFプレビュー（公式様式PDFをそのまま canvas 描画）。 */
+.pdf-sheets {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.pdf-sheet {
+  background: var(--c-surface);
+  border: 1px solid var(--gov-frame);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+.pdf-status {
+  color: var(--c-muted);
+  text-align: center;
+  padding: 12px;
+}
+.pdf-status.error {
+  color: var(--c-error);
+}
+
+/* ツールバー（印刷ボタン等。画面のみ）。 */
+.gov-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 10px;
+}
+/* 枠付きボタン（lib/styles.ts btnOutline と同じ見た目の CSS 版）。 */
+.gov-print-btn {
+  border: 1px solid var(--c-accent);
+  border-radius: 6px;
+  background: var(--c-surface);
+  color: var(--c-accent);
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.gov-print-btn:hover {
+  background: var(--c-accent-bg);
+}
+.gov-empty {
+  color: var(--c-muted);
+  text-align: center;
+  padding: 8px;
+}
+
+/* 印刷: A4・ページ送り。画面装飾を落とし、no-print 要素を隠す。 */
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .gov-wrap {
+    overflow: visible;
+    padding: 0;
+  }
+  .gov-page {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    break-after: page;
+    page-break-after: always;
+  }
+  .gov-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+  .gov-table th {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .pdf-sheet {
+    border: none;
+    box-shadow: none;
+    width: 100% !important;
+    break-after: page;
+    page-break-after: always;
+  }
+  .pdf-sheet:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "kanean",
+  "private": true,
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "dev": "turbo run dev",
+    "//dev:app": "デスクトップ実機の開発ループ。中身は packages/desktop の dev:app（turbo で依存を建て直してから electron .）。`dev` と別名なのは、turbo の dev タスクが persistent＝常駐で、root の `pnpm dev`（server+web の HMR）に Electron を混ぜたくないため。",
+    "dev:app": "pnpm --filter @kanean/desktop run dev:app",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write \"packages/*/src/**/*.{ts,tsx}\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "playwright-core": "^1.60.0",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.18.2"
+  }
+}

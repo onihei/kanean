@@ -1,0 +1,34 @@
+{
+  "name": "@kanean/desktop",
+  "version": "0.0.0",
+  "productName": "Kanean",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "electron .",
+    "//dev:app": "Electron 固有の経路（kanean:// 配信・unix socket・取込の巡回・deepLink・MCP 書き出し）を実機確認する開発ループ。UI は webDistDir() が ../web/dist を見る＝HMR が無いので web も併せて建て直す。MCP バンドルも作ってから起動する — 無いと bundledVersion が null になり、ホームの連携案内も設定の書き出しも出ない（デスクトップなのにブラウザ扱いの画面になる）。@kanean/mcp は desktop の依存ではないので turbo の filter では建たず、bundle（esbuild で src から畳む）を明示的に呼ぶ。UI と API だけなら root の `pnpm dev`（server+web の HMR）で足りる。既定の DATA_DIR は <userData>/data なので、実データを触りたくなければ `DATA_DIR=./data pnpm --filter @kanean/desktop dev:app`。配布物の同梱漏れを見るときだけ `package` を使う。",
+    "dev:app": "turbo run build --filter=@kanean/desktop --filter=@kanean/web && pnpm --filter @kanean/mcp bundle && electron .",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "test": "vitest run",
+    "package": "electron-builder --mac --config electron-builder.yml"
+  },
+  "dependencies": {
+    "@kanean/acquisition": "workspace:*",
+    "@kanean/server": "workspace:*",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "better-sqlite3": "^13.0.3",
+    "hono": "^4.6.15",
+    "pdf-lib": "^1.17.1",
+    "@hono/node-server": "^1.13.7",
+    "@kanean/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "electron": "^43.4.0",
+    "vitest": "^2.1.8",
+    "electron-builder": "^26.15.3"
+  }
+}

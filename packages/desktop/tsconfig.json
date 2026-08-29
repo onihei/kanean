@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"]
+  },
+  "//references": "server は composite ではないので project reference を張らない。ビルド順は turbo の dependsOn:['^build'] が保証し、型は package.json の exports 経由の dist/*.d.ts で解決する。",
+  "include": ["src"]
+}

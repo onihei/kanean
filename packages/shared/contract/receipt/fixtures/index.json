@@ -1,0 +1,50 @@
+{
+  "note": "両側（TS/Dart）のテストがこの一覧を読んで同じ期待値を検証する。片側だけ解釈を変えると落ちる。",
+  "cases": [
+    {
+      "file": "meta-cash-full.json",
+      "kind": "meta",
+      "valid": true
+    },
+    {
+      "file": "meta-cash-minimal.json",
+      "kind": "meta",
+      "valid": true
+    },
+    {
+      "file": "meta-card.json",
+      "kind": "meta",
+      "valid": true
+    },
+    {
+      "file": "meta-invalid-missing-payment.json",
+      "kind": "meta",
+      "valid": false
+    },
+    {
+      "file": "meta-invalid-bad-sha.json",
+      "kind": "meta",
+      "valid": false
+    },
+    {
+      "file": "status-registered.json",
+      "kind": "status",
+      "valid": true
+    },
+    {
+      "file": "status-skipped-duplicate.json",
+      "kind": "status",
+      "valid": true
+    },
+    {
+      "file": "status-skipped-unmatched-card.json",
+      "kind": "status",
+      "valid": true
+    },
+    {
+      "file": "status-skipped-out-of-period.json",
+      "kind": "status",
+      "valid": true
+    }
+  ]
+}

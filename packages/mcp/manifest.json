@@ -1,0 +1,159 @@
+{
+  "manifest_version": "0.2",
+  "name": "kanean",
+  "display_name": "Kanean",
+  "version": "0.3.0",
+  "description": "Kanean（個人事業主向けの確定申告/会計システム）の会計データを問い合わせ、連携サービスの明細を取り込む。試算表・損益計算書・貸借対照表・元帳・仕訳検索・納税予測と、連携サービスの登録・取込・未確定仕訳の分類ができる。仕訳の確定・承認は Kanean の画面で行う。",
+  "long_description": "同一マシンで起動している Kanean に接続し、会計データを読み取ります。\n\n接続はローカルソケット（アプリ起動中だけ存在）経由で、ネットワークポートは使いません。Kanean が起動していない場合は、起動してよいか確認したうえで起動します。\n\n連携サービス（EC・銀行・カード）の明細取込も行えます。ブラウザ窓が開き、ログインと2要素認証はあなた自身が入力します（認証情報はこのバンドルにも AI にも渡りません）。取り込んだ仕訳はすべて未確定（draft）として帳簿に並びます。科目が決まらなかったものには後から分類を当てられます。確定は Kanean の画面で行います。\n\n仕訳の確定・承認、勘定科目や期首残高の編集はこのバンドルからは行えません。",
+  "author": {
+    "name": "Kanean"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.mjs",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/server/index.mjs"
+      ],
+      "env": {}
+    }
+  },
+  "tools": [
+    {
+      "name": "kanean_get_context",
+      "description": "帳簿・会計年度・アプリモード・承認待ち件数"
+    },
+    {
+      "name": "kanean_start_app",
+      "description": "Kanean を起動する（要・利用者の承諾）"
+    },
+    {
+      "name": "kanean_get_trial_balance",
+      "description": "試算表"
+    },
+    {
+      "name": "kanean_get_profit_and_loss",
+      "description": "損益計算書"
+    },
+    {
+      "name": "kanean_get_balance_sheet",
+      "description": "貸借対照表"
+    },
+    {
+      "name": "kanean_get_ledger",
+      "description": "総勘定元帳・補助元帳"
+    },
+    {
+      "name": "kanean_get_account_balance",
+      "description": "指定日時点の科目残高"
+    },
+    {
+      "name": "kanean_search_entries",
+      "description": "仕訳の検索"
+    },
+    {
+      "name": "kanean_get_tax_forecast",
+      "description": "納税予測（見込み額）"
+    },
+    {
+      "name": "kanean_list_linked_services",
+      "description": "連携サービスの一覧と登録候補"
+    },
+    {
+      "name": "kanean_register_linked_service",
+      "description": "連携サービスの登録"
+    },
+    {
+      "name": "kanean_start_import",
+      "description": "連携サービスの取込を開始（ログインは利用者が行う）"
+    },
+    {
+      "name": "kanean_get_import_status",
+      "description": "取込の進行・分類待ちの品名"
+    },
+    {
+      "name": "kanean_list_unclassified",
+      "description": "科目が決まっていない仕訳の品名・摘要＋分類方針＋確定履歴"
+    },
+    {
+      "name": "kanean_classify_drafts",
+      "description": "未確定の仕訳に科目・理由・確信度を当てる（確定はしない）"
+    },
+    {
+      "name": "kanean_get_import_diagnostic",
+      "description": "取込が失敗した理由と、較正で直るかの判定"
+    },
+    {
+      "name": "kanean_get_site_calibration",
+      "description": "サイト較正の参照"
+    },
+    {
+      "name": "kanean_update_site_calibration",
+      "description": "サイト較正の更新（データのみ）"
+    },
+    {
+      "name": "kanean_reset_site_calibration",
+      "description": "サイト較正を同梱へ戻す"
+    },
+    {
+      "name": "kanean_import_cash_receipt",
+      "description": "現金レシートの取込（draft 起票＋証憑添付。カードには使わない）"
+    },
+    {
+      "name": "kanean_match_card_receipt",
+      "description": "カードのレシートを取込済み明細に突合（候補を返すだけで起票しない）"
+    },
+    {
+      "name": "kanean_get_filing_precheck",
+      "description": "申告前チェック（不備と注意の区分。提出可能は宣言しない）"
+    },
+    {
+      "name": "kanean_get_filing_sheet",
+      "description": "確定申告書等作成コーナーへの入力指示書（画面順の転記値と検算値）"
+    },
+    {
+      "name": "kanean_record_filing",
+      "description": "申告の完了記録（受付番号・控えファイルの添付）"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "kanean_this_month",
+      "description": "今月の状況",
+      "text": "Kanean の今月の状況（収支と承認待ちの有無）を確認する。"
+    },
+    {
+      "name": "kanean_import",
+      "description": "連携サービスから取り込む",
+      "text": "銀行・カード・EC の明細を取り込み、科目を当てて未確定の仕訳を作る。"
+    },
+    {
+      "name": "kanean_receipts",
+      "description": "レシートの取込",
+      "text": "スマホで撮ったレシートを取り込み、現金は起票・カードは突合して証憑を残す。"
+    },
+    {
+      "name": "kanean_closing_check",
+      "description": "決算前チェック",
+      "text": "決算前に、数字が整っているか・人の判断待ちが残っていないかを点検する。"
+    },
+    {
+      "name": "kanean_filing",
+      "description": "確定申告の転記",
+      "text": "国税庁の確定申告書等作成コーナーへ、Kanean の入力指示書どおりに転記して e-Tax 送信を支援する。認証と送信は利用者が行う。"
+    }
+  ],
+  "keywords": [
+    "accounting",
+    "bookkeeping",
+    "tax",
+    "japan"
+  ],
+  "license": "UNLICENSED",
+  "compatibility": {
+    "platforms": [
+      "darwin"
+    ]
+  }
+}

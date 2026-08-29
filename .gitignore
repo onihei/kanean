@@ -1,0 +1,40 @@
+# OS
+.DS_Store
+
+# Node / build
+node_modules/
+dist/
+*.tsbuildinfo
+.turbo/
+# MCP バンドルの生成物（packages/mcp/build/*.mcpb と staging）。
+# electron-builder が同梱するが、ビルドのたびに作り直すので追跡しない。
+packages/mcp/build/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Data (per-user SQLite, backups) — ルート直下のみ。
+# 末尾スラッシュのみだと packages/server/src/db/data 等のソースも巻き込むため /data/ で限定。
+/data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# 連携サービス取込スキルのローカル秘密（生証跡・保存ブラウザセッション。個人情報＝同期しない）
+/.kanean/
+
+# electron-builder の配布物（dmg は 145MB 級。リポジトリに入れない）
+packages/desktop/release/
+
+# Claude Code のローカル設定（許可リスト等・端末ごとに異なる）
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# 国税庁配布の e-Tax API 仕様書原本（第三者資料。再配布しない）。
+# 要約は docs/etax-api-notes.md にある。
+/etaxapi/
+
+# 迷子の Xcode 生成物（ルート直下 build/）
+/build/

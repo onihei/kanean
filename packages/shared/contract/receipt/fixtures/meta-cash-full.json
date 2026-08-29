@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "01JZQK8F3M4N5P6R7S8T9VWXYZ",
+  "capturedAt": "2026-08-14T12:34:56+09:00",
+  "image": {
+    "fileName": "01JZQK8F3M4N5P6R7S8T9VWXYZ.heic",
+    "contentType": "image/heic",
+    "sizeBytes": 1843200,
+    "sha256": "8f04a3d23851edfc290042837df2740b535f44481a9c90b74734a08681807840"
+  },
+  "paymentMethod": "cash",
+  "usage": "business",
+  "meal": {
+    "partySize": 3,
+    "participants": [
+      "山田（A社）",
+      "鈴木（A社）"
+    ]
+  },
+  "memo": "打合せ後の会食",
+  "ocr": {
+    "date": "2026-08-14",
+    "totalAmount": 12800
+  },
+  "qualityFlags": [
+    "glare"
+  ]
+}

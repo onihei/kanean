@@ -1,0 +1,9 @@
+packages:
+  - "packages/*"
+
+# ネイティブ依存のビルドを許可（pnpm 10 は既定でブロック）。
+# better-sqlite3 はサーバ側ビルドが必要。esbuild は vite/vitest/tsx が使用。
+onlyBuiltDependencies:
+  - better-sqlite3
+  - esbuild
+  - electron

@@ -1,0 +1,50 @@
+{
+  "name": "@kanean/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "//exports": "サブパスのみ公開する。'.' を index.js に向けると import しただけで TCP 待ち受けが始まるため、意図的に持たない。'./types' は型の再輸出だけ（dist/types.js は空）で、実行時には何も読み込まれない。'./acquisition' は巡回の実行殻を差し込むための口（デスクトップが起動時に呼ぶ）。",
+  "exports": {
+    "./app": "./dist/app.js",
+    "./config": "./dist/config.js",
+    "./types": "./dist/types.js",
+    "./acquisition": "./dist/acquisition/index.js"
+  },
+  "scripts": {
+    "dev": "tsx watch --env-file=../../.env src/index.ts",
+    "build": "tsc",
+    "start": "node --env-file=../../.env dist/index.js",
+    "migrate": "node --env-file=../../.env dist/migrate.js",
+    "backup": "node --env-file=../../.env dist/scripts/backup.js",
+    "restore": "node --env-file=../../.env dist/scripts/restore.js",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@kanean/acquisition": "workspace:*",
+    "@hono/node-server": "^1.13.7",
+    "@kanean/core": "workspace:*",
+    "@kanean/shared": "workspace:*",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "better-sqlite3": "^13.0.3",
+    "drizzle-orm": "^0.38.3",
+    "hono": "^4.6.15",
+    "iconv-lite": "^0.6.3",
+    "pdf-lib": "^1.17.1",
+    "ulid": "^2.3.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^22.10.2",
+    "drizzle-kit": "^0.30.1",
+    "tsx": "^4.19.2",
+    "vitest": "^2.1.8"
+  },
+  "files": [
+    "dist",
+    "migrations",
+    "assets"
+  ]
+}

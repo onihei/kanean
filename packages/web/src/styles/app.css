@@ -1,0 +1,293 @@
+/*
+ * アプリ全体の基礎スタイル（issue #274）。
+ *
+ * 色トークンの実体定義は**ここ1箇所**。lib/styles.ts の COLORS と forms.css は
+ * この --c-* 変数を参照する（値の複製・手動同期をしない）。
+ * 注意: SVG のプレゼンテーション属性（fill= / stroke=）には var() が効かない。
+ * SVG では style prop（style={{ fill: … }}）で指定すること（components/charts.tsx）。
+ */
+:root {
+  /* 成功・確定・アクティブ（緑）。 */
+  --c-ok: #1a7f37;
+  --c-ok-bg: #eaf6ec;
+  --c-ok-border: #9fd3ab;
+  /* 注意・下書き・確認待ち（アンバー）。 */
+  --c-warn: #9a6700;
+  --c-warn-bg: #fff8e1;
+  --c-warn-border: #f0d98c;
+  /* エラー・破壊的操作（赤）。 */
+  --c-error: #d1242f;
+  --c-error-bg: #fdecea;
+  --c-error-border: #f5c2bd;
+  /* リンク・情報・進行中（青）。 */
+  --c-accent: #0969da;
+  --c-accent-bg: #f3f6fa;
+  --c-accent-border: #c9d6e5;
+  /* 文字色の階調（本文 → ラベル → 注記 → 無効）。muted は白面 4.5:1（WCAG AA）を満たす値。
+     faint は AA を満たさないため**無効・打ち消しの状態表現（行のグレーアウト）専用**。本文に使わない（issue #281）。 */
+  --c-text: #222;
+  --c-sub: #555;
+  --c-muted: #767676;
+  --c-faint: #aaa;
+  /* 枠線・面。 */
+  --c-border: #ddd;
+  --c-border-faint: #f0f0f0;
+  --c-bg-subtle: #fafafa;
+  --c-surface: #fff;
+
+  /*
+   * 幾何トークン（issue #278）。インライン style の数値リテラルもこのスケールに合わせる:
+   * - 余白/ギャップ: 4px グリッド（4/8/12/16/24/32）
+   * - 角丸: s=4（小チップ）/ m=6（ボタン・バナー）/ l=8（カード・選択行）。ピル形は 999 を明示
+   * - 文字: s=11（欄外の注記）/ m=13（標準UI・表）/ l=15（小見出し・選択肢タイトル）/ xl=20（強調数値・画面タイトル）
+   * 表のセル余白（4px 10px）は密度優先の例外としてグリッド外を許す。
+   */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --rad-s: 4px;
+  --rad-m: 6px;
+  --rad-l: 8px;
+  --fs-s: 11px;
+  --fs-m: 13px;
+  --fs-l: 15px;
+  --fs-xl: 20px;
+
+  /*
+   * データ系列のカテゴリカル配色（issue #279）。**状態色（--c-ok/warn/error）はグラフ系列に
+   * 使わない** — 経費が「エラー赤」に見える等、状態の意味と衝突するため。
+   * 3色は白面で検証済み: 色弱（deutan/protan/tritan）の隣接ペア ΔE≥8.4・通常視 ΔE≥27・
+   * コントラスト全色 3:1 以上。系列を足すときは検証してから足す（安易に4色目を作らない）。
+   */
+  --viz-1: #2a78d6; /* 青 */
+  --viz-2: #eb6834; /* 橙 */
+  --viz-3: #199e70; /* 青緑 */
+}
+
+/* 基礎宣言はここで一度だけ（シェル6箇所で重複していた fontFamily/color を廃止。issue #274）。 */
+body {
+  font-family: system-ui, sans-serif;
+  font-size: 16px;
+  color: var(--c-text);
+  background: var(--c-surface);
+}
+
+/*
+ * ボタン（issue #275。旧 lib/styles.ts の btnOutline/LINKBTN を置換）。
+ * 白地に色枠・色文字のアウトラインが既定。色は変種クラスで選ぶ:
+ *   .btn-ok（確定・主要操作） .btn-accent（情報・出力） .btn-danger（破壊的操作） .btn-muted（弱い操作）
+ * 大きさ・太字などの差分は使う側が style で上書きする（幾何スケールの統一は issue #278）。
+ */
+.btn {
+  --btn-c: var(--c-sub);
+  --btn-hover-bg: var(--c-bg-subtle);
+  border: 1px solid var(--btn-c);
+  border-radius: var(--rad-m);
+  background: var(--c-surface);
+  color: var(--btn-c);
+  padding: 2px 10px;
+  cursor: pointer;
+  /* font: inherit だとページ直下で 16px に膨らむ（表内 13px と不揃い）ため大きさだけ固定する */
+  font-family: inherit;
+  font-size: var(--fs-m);
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease;
+}
+.btn:hover:not(:disabled) {
+  background: var(--btn-hover-bg);
+}
+.btn:active:not(:disabled) {
+  filter: brightness(0.96);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.btn-ok {
+  --btn-c: var(--c-ok);
+  --btn-hover-bg: var(--c-ok-bg);
+}
+.btn-accent {
+  --btn-c: var(--c-accent);
+  --btn-hover-bg: var(--c-accent-bg);
+}
+.btn-danger {
+  --btn-c: var(--c-error);
+  --btn-hover-bg: var(--c-error-bg);
+}
+.btn-muted {
+  --btn-c: var(--c-muted);
+}
+
+/* 文字だけのリンク風ボタン（旧 LINKBTN）。色の変種は style の color 上書きで足りる。 */
+.btn-link {
+  border: none;
+  background: none;
+  color: var(--c-accent);
+  cursor: pointer;
+  padding: 0 6px;
+  font-family: inherit;
+  font-size: var(--fs-m);
+}
+.btn-link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+.btn-link:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* 帳票内の小さなモード切替（税込/税抜/前期比較 等。旧 segStyle）。 */
+.seg-tab {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-bottom: 2px solid transparent;
+  color: var(--c-sub);
+  font-family: inherit;
+  font-size: var(--fs-m);
+  transition: color 0.12s ease;
+}
+.seg-tab:hover {
+  color: var(--c-text);
+}
+.seg-tab.active {
+  border-bottom-color: var(--c-ok);
+  color: var(--c-ok);
+  font-weight: 600;
+}
+
+/* 設定画面のセクション切替タブ（塗りつぶし式。旧 subTabStyle。a/button 両対応）。 */
+.sub-tab {
+  display: inline-block;
+  border: 1px solid var(--c-border);
+  border-radius: var(--rad-m);
+  background: var(--c-surface);
+  color: var(--c-sub);
+  padding: 4px 12px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: var(--fs-m);
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease;
+}
+.sub-tab:hover {
+  background: var(--c-bg-subtle);
+}
+.sub-tab.active {
+  border-color: var(--c-ok);
+  background: var(--c-ok);
+  color: var(--c-surface);
+  font-weight: 600;
+}
+.sub-tab.active:hover {
+  background: var(--c-ok);
+}
+
+/* サイドバーのナビ項目（nav/Sidebar.tsx）。 */
+.nav-item {
+  display: block;
+  border-left: 3px solid transparent;
+  color: var(--c-text);
+  font-size: var(--fs-m);
+  padding: 7px 14px;
+  text-decoration: none;
+  transition: background-color 0.12s ease;
+}
+.nav-item:hover {
+  background: var(--c-border-faint);
+}
+.nav-item.active {
+  border-left-color: var(--c-ok);
+  background: var(--c-ok-bg);
+  color: var(--c-ok);
+  font-weight: 600;
+}
+.nav-item.active:hover {
+  background: var(--c-ok-bg);
+}
+
+/*
+ * テーブル（issue #276。旧 lib/styles.ts の TD/TH/TD_NUM/TH_NUM/TD_ELLIPSIS/STICKY_TH/stickyTd を置換）。
+ * 密度は 13px に統一（従来 12/13/14 が混在）。数値セルは .num、切り詰めは .ellipsis、
+ * 横スクロール表の左固定列は .sticky を td/th に付ける。幅・余白の個別差は使う側の style で上書き。
+ */
+.tbl {
+  border-collapse: collapse;
+  font-size: var(--fs-m);
+  font-variant-numeric: tabular-nums;
+}
+.tbl th {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 2px solid var(--c-border);
+  color: var(--c-sub);
+  white-space: nowrap; /* 列が詰まっても見出しを折り返さない（推移表の月ヘッダ等） */
+}
+.tbl td {
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--c-border-faint);
+}
+.tbl th.num,
+.tbl td.num {
+  text-align: right;
+}
+/* 切り詰めは table-layout: fixed の表でのみ効く（全文は使う側が title に載せる）。 */
+.tbl td.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tbl th.sticky,
+.tbl td.sticky {
+  position: sticky;
+  left: 0;
+  background: var(--c-surface);
+  white-space: nowrap;
+}
+/* 行ホバー（横長の表で現在行を追いやすくする）。sticky セルや行の地色より優先される。 */
+.tbl tbody tr:hover td {
+  background: var(--c-bg-subtle);
+}
+/*
+ * 行アクション列（issue #282）。閲覧時は隠し、ホバー行でだけ見せる（一覧の右端を静かに保つ）。
+ * visibility なので列幅は不変（行幅が跳ねない）。キーボードは行内の他のリンク（摘要の開閉等）に
+ * フォーカスが入ると :focus-within で現れ、続く Tab でアクションに到達できる。
+ */
+.tbl td.row-actions .btn-link {
+  visibility: hidden;
+}
+.tbl tbody tr:hover td.row-actions .btn-link,
+.tbl tbody tr:focus-within td.row-actions .btn-link {
+  visibility: visible;
+}
+
+/* 破壊的操作の確認ダイアログ（issue #280。window.confirm の置換。components/common.tsx useConfirm）。 */
+dialog.confirm {
+  border: 1px solid var(--c-border);
+  border-radius: var(--rad-l);
+  padding: 20px;
+  max-width: 420px;
+  font-size: var(--fs-m);
+  color: var(--c-text);
+}
+dialog.confirm::backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* キーボードフォーカスの可視化（マウス操作では出ない）。 */
+.btn:focus-visible,
+.btn-link:focus-visible,
+.seg-tab:focus-visible,
+.sub-tab:focus-visible,
+.nav-item:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 1px;
+}

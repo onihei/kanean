@@ -1,0 +1,1 @@
+ALTER TABLE `raw_transactions` ADD `proposal_json` text;

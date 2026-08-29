@@ -1,0 +1,35 @@
+{
+  "name": "@kanean/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/nodePaths.d.ts",
+      "import": "./dist/nodePaths.js"
+    },
+    "./receipt": {
+      "types": "./dist/receipt.d.ts",
+      "import": "./dist/receipt.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "build:schema": "tsx scripts/generateJsonSchema.ts"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8",
+    "zod-to-json-schema": "^3.24.1",
+    "tsx": "^4.19.2"
+  },
+  "dependencies": {
+    "zod": "^3.25.76"
+  }
+}

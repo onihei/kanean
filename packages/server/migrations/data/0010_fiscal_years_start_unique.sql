@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `fiscal_years_start_date_uq` ON `fiscal_years` (`start_date`);

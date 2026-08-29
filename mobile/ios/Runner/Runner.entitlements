@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  iCloud Documents コンテナ（receipt-inbox spec の搬送先）。
+	  ここに inbox/ と status/ を置き、Mac 側は ~/Library/Mobile Documents/
+	  iCloud~com~susipero~kanean~mobile/Documents/ としてローカルファイルのまま読む。
+	  自前のサーバも鍵管理も要らず、本体が TCP を開かない不変条件も崩れない。
+	-->
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array>
+		<string>iCloud.com.susipero.kanean.mobile</string>
+	</array>
+	<key>com.apple.developer.ubiquity-container-identifiers</key>
+	<array>
+		<string>iCloud.com.susipero.kanean.mobile</string>
+	</array>
+	<!-- CloudKit ではなく書類同期だけを使う（構造化データは本体の SQLite が持つ）。 -->
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudDocuments</string>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"]
+  },
+  "//references": "server/shared は composite ではないので project reference を張らない（desktop と同じ）。型は package.json の exports 経由の dist/*.d.ts で解決する。",
+  "include": ["src"]
+}

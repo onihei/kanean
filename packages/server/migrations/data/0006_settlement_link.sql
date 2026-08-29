@@ -1,0 +1,1 @@
+ALTER TABLE `raw_transactions` ADD `settlement_raw_id` integer;

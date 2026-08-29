@@ -1,0 +1,1 @@
+ALTER TABLE `sub_accounts` ADD `import_source_type` text;
