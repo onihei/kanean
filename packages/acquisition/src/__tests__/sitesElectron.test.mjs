@@ -304,6 +304,27 @@ const RAKUTEN_DETAIL = `<html><body>
 </div>
 </body></html>`
 
+// 数量2の実注文（ふるさと納税）を近似: number-display は単価・数量は「数量：」ラベル・
+// 商品名に「×4」を含む（複合正規表現の最左マッチだとこれを数量と誤読していた）
+const RAKUTEN_LIST_QTY2 = `<html><body>
+<h1>購入履歴</h1>
+<li>
+  2026/08/29 テストショップ
+  <a href="https://order.my.rakuten.co.jp/purchase/detail?order_number=400028-20260829-00000002">注文詳細を見る</a>
+</li>
+</body></html>`
+
+const RAKUTEN_DETAIL_QTY2 = `<html><body>
+<h1>注文詳細</h1>
+<div>支払い金額 30,000円</div>
+<div>送料無料</div>
+<div class="item-block">
+  <a href="https://item.rakuten.co.jp/testshop/item2/">トイレットペーパー 75m×4ロール×6P</a>
+  <div class="number-display">15,000円</div>
+  <span>数量： 2</span>
+</div>
+</body></html>`
+
 describe('rakuten × Electron 殻', () => {
   it('一覧→詳細で 1 注文を抽出し、送料無料=0・ポイント利用込みで突合が通る', { timeout: 30_000 }, async () => {
     electron.route('order_number=123456-20260410-00000001', RAKUTEN_DETAIL) // 先勝ち
@@ -325,6 +346,25 @@ describe('rakuten × Electron 殻', () => {
         quantity: 1,
         lineAmount: 2100,
         evidenceRef: 'https://order.my.rakuten.co.jp/purchase/detail?order_number=123456-20260410-00000001',
+      },
+    ])
+    expect(r.warnings).toEqual([])
+  })
+
+  it('数量2は「数量：」ラベルから取り、lineAmount=単価×数量で突合が通る（商品名の×4に釣られない）', { timeout: 30_000 }, async () => {
+    electron.route('order_number=400028-20260829-00000002', RAKUTEN_DETAIL_QTY2) // 先勝ち
+    electron.route(rakuten.DEFAULT_SEL.historyUrl, RAKUTEN_LIST_QTY2)
+    const r = await drive(rakuten, { args: { since: '2026-08-01', until: '2026-08-31' } })
+    expect(r.failedOrders).toEqual([])
+    expect(r.orders).toHaveLength(1)
+    expect(r.orders[0]).toMatchObject({ orderTotal: 30000, shipping: 0, pointsUsed: 0 })
+    expect(r.orders[0].lines).toEqual([
+      {
+        lineNo: 1,
+        itemName: 'トイレットペーパー 75m×4ロール×6P',
+        quantity: 2,
+        lineAmount: 30000,
+        evidenceRef: 'https://order.my.rakuten.co.jp/purchase/detail?order_number=400028-20260829-00000002',
       },
     ])
     expect(r.warnings).toEqual([])

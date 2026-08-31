@@ -15,7 +15,9 @@ export const EVIDENCE_KEY = 'rakuten'
 // v3: 巡回コアを packages/acquisition へ切り出し（挙動は同一）
 // v4: 突合・結果組み立てを core/ecOrder へ抽出（挙動は同一・単体テスト対象化）
 // v5: 巡回骨格（ログイン待ち・ページ送り・中断/証跡）を core/steps へ抽出（挙動は同一）
-export const SCRIPT = 'rakuten@v5'
+// v6: 数量は「数量：N」ラベル優先（商品名中の「140g×10個」等の×Nを誤読していた）・
+//     lineAmount=単価×数量（number-display は単価。数量≥2 の注文は突合が必ず落ちていた）
+export const SCRIPT = 'rakuten@v6'
 
 /**
  * 失敗の粒度（acquisition spec「部分成功を成功と見分けられるようにする」・issue #171）。
@@ -185,15 +187,26 @@ export async function scrape({ context, sel, args, run, log, evidence, onWaiting
             if (priceEl) usedPrice.add(priceEl)
             const priceRaw = priceEl ? (priceEl.innerText.match(/[\d,，]+/)?.[0] ?? null) : null
             const blkTxt = (block?.innerText || '').replace(/\s+/g, ' ')
-            const qty = /[×x]\s*(\d+)|数量[\s:：]*(\d+)/.exec(blkTxt)
-            out.push({ itemName: name, quantity: qty ? parseInt(qty[1] ?? qty[2], 10) : 1, priceRaw })
+            // 商品名に「140g×10個」等の ×N 表記が多く、最左マッチでは数量ラベルより先に当たる。
+            // 「数量：N」を先に探し、×N はラベルが無いページの最終手段に格下げ。
+            const qty = /数量[\s:：]*(\d+)/.exec(blkTxt) ?? /[×x]\s*(\d+)/.exec(blkTxt)
+            out.push({ itemName: name, quantity: qty ? parseInt(qty[1], 10) : 1, priceRaw })
           }
           return out
         },
         { itemSel: sel.itemLink, priceSel: sel.priceContainer }
       )
+      // number-display の金額は単価（行合計ではない）。lineAmount は Amazon と同じ
+      // 「数量込みの行合計」に揃える。単価でないレイアウトが混ざっても突合が弾く。
       const lines = items
-        .map((it) => ({ itemName: it.itemName, quantity: it.quantity, lineAmount: yen(it.priceRaw) }))
+        .map((it) => {
+          const unit = yen(it.priceRaw)
+          return {
+            itemName: it.itemName,
+            quantity: it.quantity,
+            lineAmount: unit == null ? null : unit * it.quantity,
+          }
+        })
         .filter((l) => l.lineAmount != null && l.lineAmount > 0)
       if (!lines.length) {
         failedOrders.push(failedOrder(head, '商品行を抽出できない（SEL.itemLink の較正要）'))
